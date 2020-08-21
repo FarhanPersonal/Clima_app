@@ -6,13 +6,16 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -23,9 +26,11 @@ public class WeatherController extends AppCompatActivity {
 
     // Constants:
     final int REQUET_CODE = 123;
+
+    // Base url for API call to openweathermap
     final String WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather";
     // App ID to use OpenWeather data
-    final String APP_ID = "e72____PLEASE_REPLACE_ME_____13";
+    final String APP_ID = "66b689aded3dc277d515075f67107cd3";
     // Time between location updates (5000 milliseconds or 5 seconds)
     final long MIN_TIME = 5000;
     // Distance between location updates (1000m or 1km)
@@ -64,14 +69,30 @@ public class WeatherController extends AppCompatActivity {
 
     // TODO: Add onResume() here:
 
+    @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
     protected void onResume() {
         super.onResume();
         Log.d("Clima", "OnResume() called");
         Log.d("Clima", "Getting weather for current location");
 
-        this.getWeatherForCurrentLocation();
+        if(isLocationServiceEnabled()){
+            Log.d("Clima", "Location service enabled.");
+            Toast.makeText(this, "Fetching your weather data", Toast.LENGTH_LONG).show();
+
+            this.getWeatherForCurrentLocation();
+        }
+
+        else Toast.makeText(this, "Enable location service to continue", Toast.LENGTH_LONG).show();
+
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.P)
+    private boolean isLocationServiceEnabled() {
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        return locationManager.isLocationEnabled();
+    }
+
 
     // TODO: Add getWeatherForNewCity(String city) here:
 
@@ -85,6 +106,11 @@ public class WeatherController extends AppCompatActivity {
 
                 Log.d("Clima", "onlocationChanged() call back received");
 
+                String latitude = String.valueOf(location.getLatitude());
+                String longitude = String.valueOf(location.getLongitude());
+
+                Log.d("Clima", "Latitude: " + latitude);
+                Log.d("Clima", "Longitude: " + longitude);
             }
 
             @Override

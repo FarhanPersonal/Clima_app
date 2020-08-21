@@ -7,6 +7,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.service.dreams.DreamService;
 import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -20,8 +21,12 @@ import androidx.core.app.ActivityCompat;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.JsonValueInterface;
 import com.loopj.android.http.RequestHandle;
 import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.ResponseHandlerInterface;
+
+import org.json.JSONObject;
 
 
 public class WeatherController extends AppCompatActivity {
@@ -31,11 +36,11 @@ public class WeatherController extends AppCompatActivity {
     // Base url for API call to openweathermap
     final String WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather";
     // App ID to use OpenWeather data
-    final String APP_ID = "66b689aded3dc277d515075f67107cd3";
+    final static String APP_ID = "66b689aded3dc277d515075f67107cd3";
     // Time between location updates (5000 milliseconds or 5 seconds)
-    final long MIN_TIME = 5000;
+    final long MIN_TIME = 1000;
     // Distance between location updates (1000m or 1km)
-    final float MIN_DISTANCE = 1000;
+    final float MIN_DISTANCE = 1;
     //endregion
 
     //region Fields
@@ -70,14 +75,11 @@ public class WeatherController extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.d("Clima", "OnResume() called");
-
         if (isLocationServiceEnabled()) {
             Log.d("Clima", "Location service enabled.");
             Toast.makeText(this, "Fetching your weather data", Toast.LENGTH_LONG).show();
-
             this.getWeatherForCurrentLocation();
-        } else
-            Toast.makeText(this, "Enable location service to continue", Toast.LENGTH_LONG).show();
+        } else Toast.makeText(this, "Enable location service to continue", Toast.LENGTH_LONG).show();
 
     }
     //endregion
@@ -95,7 +97,6 @@ public class WeatherController extends AppCompatActivity {
     private void getWeatherForCurrentLocation() {
         this._locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         this._locationListener = new com.londonappbrewery.climapm.LocationListener();
-
         requestLocation();
     }
 
@@ -108,10 +109,15 @@ public class WeatherController extends AppCompatActivity {
     }
 
     public void getDataFromNetwork(RequestParams params){
+
+        Log.d("Clima","Calling API");
+
         AsyncHttpClient client = new AsyncHttpClient();
+        JSONObject jsonObject = new JSONObject();
         RequestHandle requestHandler = client.get(WEATHER_URL, params, new JsonHttpResponseHandler());
 
-        Log.d("Clima", "Calling api successful");
+        Log.d("Clima","API called");
+
     }
 
     //region Callback methods
@@ -120,15 +126,10 @@ public class WeatherController extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if(requestCode == REQUET_CODE){
-
             if(grantResults.length > 0 || grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 Log.d("Clima", "onRequestPermissionResult(): Permission granted");
                 getWeatherForCurrentLocation();
-            }
-
-            else {
-                Log.d("Clima", "Permission denied");
-            }
+            } else Log.d("Clima", "Permission denied");
         }
     }
     //endregion

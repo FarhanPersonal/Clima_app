@@ -18,20 +18,18 @@ public class LocationListener implements android.location.LocationListener {
 
         Log.d("Clima", "onlocationChanged() call back received");
 
-        String appid = valueOf(location.getLatitude());
+        String latitude = valueOf(location.getLatitude());
         String longitude = valueOf(location.getLongitude());
 
-        Log.d("Clima", "Latitude: " + appid);
+        Log.d("Clima", "Latitude: " + latitude);
         Log.d("Clima", "Longitude: " + longitude);
 
         RequestParams params = new RequestParams();
-        params.put("lat", appid);
+        params.put("lat", latitude);
         params.put("long", longitude);
-        params.put("appid", appid);
-
+        params.put("appid", WeatherController.APP_ID);
 
         WeatherController weatherController = new WeatherController();
-
         weatherController.getDataFromNetwork(params);
     }
 

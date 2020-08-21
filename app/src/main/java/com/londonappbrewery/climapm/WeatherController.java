@@ -7,7 +7,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.service.dreams.DreamService;
 import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -21,12 +20,11 @@ import androidx.core.app.ActivityCompat;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.JsonValueInterface;
-import com.loopj.android.http.RequestHandle;
 import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.ResponseHandlerInterface;
 
 import org.json.JSONObject;
+
+import cz.msebera.android.httpclient.Header;
 
 
 public class WeatherController extends AppCompatActivity {
@@ -113,11 +111,26 @@ public class WeatherController extends AppCompatActivity {
         Log.d("Clima","Calling API");
 
         AsyncHttpClient client = new AsyncHttpClient();
-        JSONObject jsonObject = new JSONObject();
-        RequestHandle requestHandler = client.get(WEATHER_URL, params, new JsonHttpResponseHandler());
+
+        client.get(WEATHER_URL, params, new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d("Clima", "Success! JSON: " + response.toString());
+//                WeatherDataModel weatherData = WeatherDataModel.fromJson(response);
+//                updateUI(weatherData);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable e, JSONObject response) {
+                Log.e("Clima", "Fail " + e.toString());
+                Toast.makeText(WeatherController.this, "Request Failed", Toast.LENGTH_SHORT).show();
+
+//                Log.d(LOGCAT_TAG, "Status code " + statusCode);
+//                Log.d(LOGCAT_TAG, "Here's what we got instead " + response.toString());
+            }
+        });
 
         Log.d("Clima","API called");
-
     }
 
     //region Callback methods

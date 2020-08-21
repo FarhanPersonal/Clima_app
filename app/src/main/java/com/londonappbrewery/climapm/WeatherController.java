@@ -9,6 +9,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.webkit.HttpAuthHandler;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,6 +19,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestHandle;
+import com.loopj.android.http.RequestParams;
 
 import static java.lang.String.*;
 
@@ -103,11 +109,17 @@ public class WeatherController extends AppCompatActivity {
 
                 Log.d("Clima", "onlocationChanged() call back received");
 
-                String latitude = String.valueOf(location.getLatitude());
-                String longitude = String.valueOf(location.getLongitude());
+                String appid = valueOf(location.getLatitude());
+                String longitude = valueOf(location.getLongitude());
 
-                Log.d("Clima", "Latitude: " + latitude);
+                Log.d("Clima", "Latitude: " + appid);
                 Log.d("Clima", "Longitude: " + longitude);
+
+                RequestParams params = new RequestParams();
+                params.put("lat", appid);
+                params.put("long", longitude);
+                params.put("appid", appid);
+                getDataFromNetwork(params);
             }
 
             @Override
@@ -163,7 +175,15 @@ public class WeatherController extends AppCompatActivity {
     }
 
 
-// TODO: Add letsDoSomeNetworking(RequestParams params) here:
+    private void getDataFromNetwork(RequestParams params){
+
+        AsyncHttpClient client = new AsyncHttpClient();
+
+        RequestHandle requestHandler = client.get(WEATHER_URL, params, new JsonHttpResponseHandler());
+
+        Log.d("Clima", "Calling api successful");
+
+    }
 
 
 

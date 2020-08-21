@@ -24,9 +24,7 @@ import static java.lang.String.*;
 
 public class WeatherController extends AppCompatActivity {
 
-    // Constants:
     final int REQUET_CODE = 123;
-
     // Base url for API call to openweathermap
     final String WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather";
     // App ID to use OpenWeather data
@@ -36,16 +34,15 @@ public class WeatherController extends AppCompatActivity {
     // Distance between location updates (1000m or 1km)
     final float MIN_DISTANCE = 1000;
 
-    // TODO: Set LOCATION_PROVIDER here:
+    // Set LOCATION_PROVIDER here:
     String LOCATION_PROVIDER = LocationManager.NETWORK_PROVIDER;
-
 
     // Member Variables:
     TextView mCityLabel;
     ImageView mWeatherImage;
     TextView mTemperatureLabel;
 
-    // TODO: Declare a LocationManager and a LocationListener here:
+    // Declare a LocationManager and a LocationListener here:
     LocationManager mLocationManager;
     LocationListener mLocationListener;
 
@@ -66,15 +63,11 @@ public class WeatherController extends AppCompatActivity {
 
     }
 
-
-    // TODO: Add onResume() here:
-
     @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
     protected void onResume() {
         super.onResume();
         Log.d("Clima", "OnResume() called");
-        Log.d("Clima", "Getting weather for current location");
 
         if(isLocationServiceEnabled()){
             Log.d("Clima", "Location service enabled.");
@@ -87,6 +80,10 @@ public class WeatherController extends AppCompatActivity {
 
     }
 
+    /**
+     * Checks if the location service is enabled or not.
+     * @return
+     */
     @RequiresApi(api = Build.VERSION_CODES.P)
     private boolean isLocationServiceEnabled() {
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
